@@ -4,6 +4,8 @@ import paho.mqtt.client as mqtt
 import logging
 import time
 import socket
+import binascii
+
 
 #Logging parameters
 
@@ -23,7 +25,8 @@ updateLoopInterval = 30 #Seconds
 #PowerSwitch parameters
 
 PowerSwitchIp = "192.168.1.70"
-PowerSwitchPort = 5005
+PowerSwitchPort = 18530
+PowerSwitchStatus = ""
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -32,26 +35,33 @@ logging.info("Status update interval : {} seconds".format(updateLoopInterval))
 
 # MQTT INIT
 mqttclient = mqtt.Client(mqttconnname)
+
 # MQTT LOG
 mqttclient.enable_logger(logger=None)
 def on_log(client, userdata, level, buf):
     logging.debug("mqttclient log: ".format(buf))
 mqttclient.on_log=on_log
+
 #MQTT connection
 mqttclient.username_pw_set(mqttusername, mqttpassowrd)
 mqttclient.connect(mqttserveraddr, port=mqttserverport, keepalive=60, bind_address="")
 
 def send_udp_command(payload, IP=PowerSwitchIp, PORT=PowerSwitchPort):
-    logging.debug("Sending payload : {} to {}:{}".format(payload, IP, PORT))
-    sock.sendto(bytes(payload, "utf-8"), (IP, PORT))
+
+    payload_hex = binascii.a2b_hex(payload)
+    logging.debug("Encoding payload string {} to hex {} and sending it to {}:{}".format(payload,payload_hex, IP, PORT))
+    sock.sendto(payload_hex, (IP, PORT))
 
 def turn_switch(mode):
+    global PowerSwitchStatus
     if mode == "OFF":
         logging.info("Sending udp traffic to turn off powerswitch --> {}".format(mode))
-        send_udp_command("OFF")
+        send_udp_command("014498d8630f06b610ee4c4ecbc0a20a0cb84897b58d2ac042")
+        PowerSwitchStatus = "OFF"
     if mode == "ON":
         logging.info("Sending udp traffic to turn on powerswitch --> {}".format(mode))
-        send_udp_command("ON")
+        send_udp_command("014498d8630f06b6100d95f1a1cfa277e2ea4b4964b2824abc")
+        PowerSwitchStatus = "ON"
 
 
 # Publish to MQTT.
@@ -77,8 +87,9 @@ def on_message(client, userdata, message):
 
 def powerswitch_get_status():
     logging.info("Getting status from powerswitch...")
-    send_udp_command("STATUS")
-    return "Return value of powerswitch_get_status to MQTT"
+    #HACK REMOVE WHEN STATUS MECHANICS INPLACE
+    global PowerSwitchStatus
+    return PowerSwitchStatus
 
 def powerswitch_status_update():
     switch_status = powerswitch_get_status()
