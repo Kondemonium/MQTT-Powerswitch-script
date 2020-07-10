@@ -11,7 +11,7 @@ import binascii
 
 # Gets or creates a logger
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s : %(levelname)s : %(name)s : %(funcName)s : %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s : %(levelname)s : %(name)s : %(funcName)s : %(message)s')
 
 #Generic Switch-GW parameters
 mqttusername = "pwrtest"
@@ -26,7 +26,7 @@ updateLoopInterval = 30 #Seconds
 
 PowerSwitchIp = "192.168.1.70"
 PowerSwitchPort = 18530
-PowerSwitchStatus = ""
+PowerSwitchStatus = "Unknown"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -47,7 +47,6 @@ mqttclient.username_pw_set(mqttusername, mqttpassowrd)
 mqttclient.connect(mqttserveraddr, port=mqttserverport, keepalive=60, bind_address="")
 
 def send_udp_command(payload, IP=PowerSwitchIp, PORT=PowerSwitchPort):
-
     payload_hex = binascii.a2b_hex(payload)
     logging.debug("Encoding payload string {} to hex {} and sending it to {}:{}".format(payload,payload_hex, IP, PORT))
     sock.sendto(payload_hex, (IP, PORT))
@@ -58,10 +57,12 @@ def turn_switch(mode):
         logging.info("Sending udp traffic to turn off powerswitch --> {}".format(mode))
         send_udp_command("014498d8630f06b610ee4c4ecbc0a20a0cb84897b58d2ac042")
         PowerSwitchStatus = "OFF"
+        powerswitch_status_update()
     if mode == "ON":
         logging.info("Sending udp traffic to turn on powerswitch --> {}".format(mode))
         send_udp_command("014498d8630f06b6100d95f1a1cfa277e2ea4b4964b2824abc")
         PowerSwitchStatus = "ON"
+        powerswitch_status_update()
 
 
 # Publish to MQTT.
