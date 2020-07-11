@@ -25,9 +25,9 @@ UDP Transmission listener with netcat for script UDP transmissions :
 ```
 netcat -ul 18530
 ```
-run script 
+Configure and run script 
 ```
-python pwr-switch-gw.py 
+python3 pwr-switch-gw.py 
 ```
 
 # Building venv for testing @ Ubuntu
