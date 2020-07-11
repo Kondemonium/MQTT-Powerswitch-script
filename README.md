@@ -2,7 +2,7 @@
 
 Script to communicate with mosquitto broker --> PowerSwitch
 
-# MQTT testing / Debug
+# MQTT Testing / Debug
 
 Run mosquitto server with mosquitto -v flag
 
@@ -19,7 +19,7 @@ UDP Transmission test with netcat :
 
 netcat -ul 18530
 
-# Packages 
+# Packages for MQTT Testing / Debug
 
 apt install mosquitto-clients
 
