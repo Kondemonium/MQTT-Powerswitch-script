@@ -17,13 +17,17 @@ mosquitto_sub -h localhost -t powerswitch/command -u pwrtest -P passw0rd
 mosquitto_pub -h localhost -t powerswitch/command -m "1" -u pwrtest -P passw0rd
 mosquitto_pub -h localhost -t powerswitch/command -m "0" -u pwrtest -P passw0rd
 ```
-status channel test : 
+status channel listener for script output : 
 ```
 mosquitto_sub -h localhost -t powerswitch/switch_status -u pwrtest -P passw0rd
 ```
-UDP Transmission test with netcat : 
+UDP Transmission listener with netcat for script UDP transmissions : 
 ```
 netcat -ul 18530
+```
+run script 
+```
+python pwr-switch-gw.py 
 ```
 
 # Building venv for testing @ Ubuntu
