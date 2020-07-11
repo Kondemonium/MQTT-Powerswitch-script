@@ -13,6 +13,7 @@ apt install mosquitto-clients
 
 Command channel test : 
 ```
+mosquitto_sub -h localhost -t powerswitch/command -u pwrtest -P passw0rd
 mosquitto_pub -h localhost -t powerswitch/command -m "1" -u pwrtest -P passw0rd
 mosquitto_pub -h localhost -t powerswitch/command -m "0" -u pwrtest -P passw0rd
 ```
