@@ -6,6 +6,11 @@ Script to communicate with mosquitto broker --> PowerSwitch
 
 Run mosquitto server with mosquitto -v flag
 
+mosquitto_pub and mosquitto_sub tools : 
+```
+apt install mosquitto-clients
+```
+
 Command channel test : 
 ```
 mosquitto_pub -h localhost -t powerswitch/command -m "1" -u pwrtest -P passw0rd
@@ -19,10 +24,7 @@ UDP Transmission test with netcat :
 ```
 netcat -ul 18530
 ```
-# Packages for MQTT Testing / Debug
-```
-apt install mosquitto-clients
-```
+
 # Building venv for testing @ Ubuntu
 ```
 sudo apt install python3-venv
